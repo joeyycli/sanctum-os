@@ -122,3 +122,13 @@ Create the VM like this:
 
 The guest is identical in both hypervisors: same ISO, same hardening, same
 first-boot provisioning.
+
+## Claude Desktop shows a blank window?
+
+VirtualBox ARM exposes no GPU render node to Linux guests, and Electron's GPU
+compositor produces an empty window on the software-GL fallback. Sanctum ships
+a launcher shim (`/usr/local/bin/claude-desktop`) that detects the missing
+`/dev/dri/renderD128` and adds `--disable-gpu` automatically. If you ever see
+a blank Claude window regardless, launch it manually with:
+
+    claude-desktop --disable-gpu

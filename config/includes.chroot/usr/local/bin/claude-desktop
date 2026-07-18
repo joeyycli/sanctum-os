@@ -1,0 +1,12 @@
+#!/bin/sh
+# Sanctum OS launcher shim for Claude Desktop.
+# VirtualBox ARM64 VMs expose no GPU render node to Linux guests, and
+# Electron's GPU-process compositing blank-screens on the llvmpipe/SwiftShader
+# fallback. With no /dev/dri render node, force software rendering — verified
+# to render correctly. UTM/QEMU guests with virtio-gpu keep the GPU path.
+# /usr/local/bin precedes /usr/bin in PATH, so the stock .desktop Exec line
+# resolves here and this shim survives app updates untouched.
+if [ -e /dev/dri/renderD128 ]; then
+    exec /usr/bin/claude-desktop "$@"
+fi
+exec /usr/bin/claude-desktop --disable-gpu "$@"
