@@ -1,0 +1,14 @@
+# Sanctum OS — runtime dependencies of the claude-desktop .deb (fetched at
+# first boot from Anthropic's repo). Preinstalling them keeps the first-boot
+# install a single small download and immune to archive-index freshness.
+# Source of truth: Depends of claude-desktop in
+# https://downloads.claude.ai/claude-desktop/apt/stable (binary-arm64 Packages).
+# The rest of its Depends (mesa, xcb, glib, portals, uuid) ship with GNOME.
+xdg-utils
+libgtk-3-0t64
+libnotify4
+libnss3
+libsecret-1-0
+libxtst6
+# tray icon support (Recommends)
+libayatana-appindicator3-1
