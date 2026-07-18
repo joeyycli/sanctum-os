@@ -76,16 +76,26 @@ class Actions:
                 return f"Opening {ai.get_display_name()}."
         return f"I couldn't find an app called “{name}”."
 
+    def _open_uri(self, uri):
+        # Deliver the URI as a launch argument to Firefox itself. On a cold
+        # start this opens Firefox directly on the page (no race with a
+        # still-initialising instance); on a warm start it opens a new tab.
+        info = Gio.DesktopAppInfo.new("org.mozilla.firefox.desktop")
+        if info:
+            info.launch_uris([uri], None)
+        else:
+            Gio.AppInfo.launch_default_for_uri(uri, None)
+
     def open_url(self, url):
         url = url.strip()
         if not re.match(r"^[a-zA-Z][a-zA-Z0-9+.-]*://", url):
             url = "https://" + url
-        Gio.AppInfo.launch_default_for_uri(url, None)
+        self._open_uri(url)
         return f"Opening {url}"
 
     def web_search(self, query, engine="duckduckgo"):
         tmpl = SEARCH_ENGINES.get(engine, SEARCH_ENGINES["duckduckgo"])
-        Gio.AppInfo.launch_default_for_uri(tmpl.format(quote_plus(query)), None)
+        self._open_uri(tmpl.format(quote_plus(query)))
         where = "YouTube" if engine == "youtube" else engine.capitalize()
         return f"Searching {where} for “{query}”."
 
@@ -162,6 +172,8 @@ class Parser:
     APP_VERBS = r"(?:open|launch|start|run|fire up)"
     NAV_VERBS = r"(?:go to|goto|visit|navigate to|browse to|open)"
 
+    BROWSER_NAMES = {"firefox", "browser"}
+
     def parse(self, text):
         text = text.strip()
         clauses = self._split(text)
@@ -171,7 +183,18 @@ class Parser:
             if step is None:
                 return None  # any unparsable clause → whole thing goes to LLM
             steps.append(step)
-        return steps or None
+        return self._dedup(steps) or None
+
+    def _dedup(self, steps):
+        # "open firefox and go to X" → opening X already brings up the browser,
+        # so drop a standalone browser launch when a navigate/search follows.
+        navigates = any(s[0] in ("open_url", "web_search") for s in steps)
+        if not navigates:
+            return steps
+        return [s for s in steps
+                if not (s[0] == "launch_app"
+                        and s[1].get("name", "").strip().lower()
+                        in self.BROWSER_NAMES)]
 
     def _split(self, text):
         # Split compound commands on " and then " / ", then " / " and " —
