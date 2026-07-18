@@ -3,8 +3,9 @@ Type=Application
 Version=1.0
 Name=Install Sanctum OS
 Comment=Install Sanctum OS permanently on this machine
-# Reuses the pkexec launcher shipped by calamares-settings-debian, whose
-# polkit policy authorizes the live session without a password prompt.
+# Reuses the pkexec launcher from calamares-settings-debian; the passwordless
+# launch relies on live-config's polkit rules for the sudo-group live user
+# (calamares itself ships auth_admin — Debian bug #1037295).
 Exec=calamares-install-debian
 Icon=sanctum
 Terminal=false

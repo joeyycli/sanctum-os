@@ -1,0 +1,6 @@
+#!/bin/sh
+set -e
+# trixie's dash supports pipefail; without it, tee masks lb build failures.
+set -o pipefail
+
+lb build noauto "${@}" 2>&1 | tee build.log

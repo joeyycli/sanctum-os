@@ -39,6 +39,10 @@ asking_password = 0;
 bullet_image = Image("bullet.png");
 prompt_sprite = Sprite();
 max_bullets = 48;
+// Top-level init: plymouth-script names resolve local-first, so without this
+// the callback would create a fresh LOCAL hash each call and the bullet
+// sprites would be garbage-collected before ever rendering.
+bullets = [];
 
 fun hide_password_ui() {
     prompt_sprite.SetOpacity(0);
@@ -89,7 +93,8 @@ fun display_password_callback(prompt, chars) {
 }
 
 fun display_question_callback(prompt, entry) {
-    display_password_callback(prompt, StringLength(entry));
+    // String(x).Length() is the built-in; a bare StringLength() does not exist.
+    display_password_callback(prompt, String(entry).Length());
 }
 
 message_sprite = Sprite();

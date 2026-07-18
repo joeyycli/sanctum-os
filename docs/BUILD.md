@@ -72,14 +72,14 @@ one stage:
 
 | Stage | Where it lives here | What happens |
 | ----- | ------------------- | ------------ |
-| Configuration | `config/auto/config` | Defines the image: Debian 13 (trixie), `arm64`, live system, `iso-hybrid`, **GRUB-EFI bootloader** (ARM64 VMs are UEFI-only — there is no BIOS/syslinux path), squashfs root, boot parameters for the live session (`username=sanctum`, `hostname=sanctum`, …) |
+| Configuration | `auto/config` | Defines the image: Debian 13 (trixie), `arm64`, live system, `iso-hybrid`, **GRUB-EFI bootloader** (ARM64 VMs are UEFI-only — there is no BIOS/syslinux path), squashfs root, boot parameters for the live session (`username=sanctum`, `hostname=sanctum`, …) |
 | Bootstrap + packages | `config/package-lists/*.list.chroot` | debootstrap builds a minimal trixie chroot, then installs the four package lists: `sanctum-base` (security backbone), `sanctum-desktop` (minimal GNOME 48), `sanctum-installer` (Calamares + crypto/boot stack), `sanctum-vm` (VirtualBox/UTM guest support) |
 | File overlay | `config/includes.chroot/` | Copied verbatim onto the chroot's `/`. This is where the firewall rules, sysctls, DNS config, systemd units, provisioning scripts, and branding assets live |
 | Hooks | `config/hooks/normal/*.hook.chroot` | Shell scripts executed **inside** the chroot, in numeric order: `0100` identity (os-release), `0200` pin Anthropic's apt key (build fails on fingerprint mismatch), `0300` install Firefox + Telegram Flatpaks and tighten their sandboxes, `0500` compile dconf defaults + set the Plymouth theme, `0600` service enable/mask policy, `0700` account hardening, `0900` cleanup and slimming |
 | Binary | (generated) | The chroot is compressed into a squashfs, wrapped with GRUB-EFI (`BOOTAA64.EFI`), and mastered into the hybrid ISO |
 
-`config/auto/build` wraps `lb build` and tees everything to `build.log`;
-`config/auto/clean` resets the generated state.
+`auto/build` wraps `lb build` and tees everything to `build.log`;
+`auto/clean` resets the generated state.
 
 ## The asset pipeline
 

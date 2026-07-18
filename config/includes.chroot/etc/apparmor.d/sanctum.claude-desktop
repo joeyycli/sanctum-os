@@ -180,6 +180,8 @@ profile claude-desktop /usr/lib/claude-desktop/claude-desktop
   # --- Crown jewels: enforced even while the profile is in complain mode ---
   audit deny @{HOME}/.ssh/{,**} mrwkl,
   audit deny @{HOME}/.gnupg/{,**} mrwkl,
+  # Raw keyring files are never a sanctioned path — Secret Service over D-Bus is.
+  audit deny @{HOME}/.local/share/keyrings/{,**} mrwkl,
   audit deny /etc/{,g}shadow{,-} mrwkl,
   audit deny /root/{,**} mrwkl,
 

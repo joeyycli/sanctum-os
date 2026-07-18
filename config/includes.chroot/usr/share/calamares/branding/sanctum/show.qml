@@ -59,7 +59,7 @@ Presentation
             Text {
                 anchors.horizontalCenter: parent.horizontalCenter
                 horizontalAlignment: Text.AlignHCenter
-                text: "Firewall closed to the world.  Disk encrypted with LUKS2.\nApplications sandboxed.  Security updates apply themselves.\nEncrypted DNS through Quad9.  Nothing phones home."
+                text: "Firewall closed to the world.  Disk fully encrypted.\nApplications sandboxed.  Security updates apply themselves.\nEncrypted DNS through Quad9.  Nothing phones home."
                 font.family: "Inter"; font.pixelSize: 16; lineHeight: 1.4
                 color: "#6E6E76"
             }

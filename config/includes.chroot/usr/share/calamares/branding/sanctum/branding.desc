@@ -33,8 +33,9 @@ images:
 slideshow: "show.qml"
 slideshowAPI: 2
 
+# Calamares 3.3 matches style keys case-sensitively (UpperCamelCase).
 style:
-    sidebarBackground:    "#F7F6F3"
-    sidebarText:          "#1A1A1E"
-    sidebarTextSelect:    "#FFFFFF"
-    sidebarTextHighlight: "#5C6F8A"
+    SidebarBackground:        "#F7F6F3"
+    SidebarText:              "#1A1A1E"
+    SidebarTextCurrent:       "#FFFFFF"
+    SidebarBackgroundCurrent: "#5C6F8A"

@@ -44,7 +44,7 @@ you create the VM by hand.
 | Graphics controller | **VMSVGA** | The only working option |
 | Video memory | **128 MB** (maximum) | Low VRAM causes blank screens and missing resolutions |
 | Storage controller | **VirtIO SCSI** | Disk on port 0, optical (ISO) on port 1 |
-| Disk | 25 GB VDI | LUKS2 container + system + working space |
+| Disk | 25 GB VDI | LUKS container + system + working space |
 | Network adapter | NAT | Outbound-only; matches the guest's deny-inbound firewall |
 | Audio | None | Unreliable on ARM guests; removed surface |
 | USB | xHCI (USB 3.0) | Virtual input devices |

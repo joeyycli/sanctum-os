@@ -4,7 +4,7 @@
 
 Sanctum OS is a hardened, minimal Debian 13 derivative for aarch64, purpose-built
 for secure AI work inside virtual machines on Apple Silicon. It boots in
-VirtualBox 7.2+ ARM64 VMs, installs with LUKS2 full-disk encryption by default,
+VirtualBox 7.2+ ARM64 VMs, installs with LUKS full-disk encryption by default,
 ships a deliberately small GNOME 48 desktop, and provisions Claude Desktop from
 Anthropic's official signed repository on first boot.
 
@@ -18,7 +18,7 @@ Version 1.0.0 — codename *marble*.
 
 | Layer    | What you get |
 | -------- | ------------ |
-| Disk     | LUKS2 full-disk encryption, pre-selected in the installer; passphrase required at every boot |
+| Disk     | LUKS full-disk encryption, pre-selected in the installer; passphrase required at every boot |
 | Network  | nftables deny-all-inbound firewall, encrypted DNS (Quad9, DNS-over-TLS + DNSSEC), LLMNR/mDNS off, Wi-Fi MAC randomization, zero listening services, no SSH |
 | Kernel   | `lockdown=integrity`, KSPP-aligned sysctls, hardened boot command line, module blacklist for legacy protocol and bus drivers |
 | System   | AppArmor enforced, root account locked, no core dumps, zram-only swap (secrets never swap to disk), `0700` home directories, `027` umask |

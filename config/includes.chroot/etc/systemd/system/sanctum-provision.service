@@ -6,6 +6,9 @@ ConditionPathExists=!/var/lib/sanctum/provisioned
 
 [Service]
 Type=oneshot
+# NetworkManager-wait-online is disabled for boot speed, so network-online.target
+# is reached optimistically — wait for real connectivity here instead.
+ExecStartPre=-/usr/bin/nm-online -q --timeout=120
 ExecStart=/usr/local/sbin/sanctum-provision
 TimeoutStartSec=15min
 Restart=on-failure

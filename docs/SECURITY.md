@@ -53,8 +53,8 @@ protection *from* the host.
 
 | Measure | Implementation |
 | ------- | -------------- |
-| LUKS2 full-disk encryption | Pre-selected in the Calamares installer; `cryptsetup` + `cryptsetup-initramfs` from `config/package-lists/sanctum-installer.list.chroot`. Passphrase required at every boot; only the EFI partition is cleartext |
-| AppArmor enforced | `apparmor`, `apparmor-profiles`, `apparmor-utils` installed; all shipped profiles forced to enforce mode in `config/hooks/normal/0700-security.hook.chroot` |
+| LUKS full-disk encryption | Pre-selected in the Calamares installer; `cryptsetup` + `cryptsetup-initramfs` from `config/package-lists/sanctum-installer.list.chroot`. Passphrase required at every boot; only the EFI partition is cleartext. LUKS**1**, deliberately: `/boot` lives inside the encrypted root, and trixie's GRUB 2.12 cannot open LUKS2's argon2id — luks2 would not boot (revisit at GRUB ≥ 2.14) |
+| AppArmor | `apparmor`, `apparmor-profiles`, `apparmor-utils`; Debian's shipped profiles run in their default enforce mode. The custom Claude Desktop profile (`etc/apparmor.d/sanctum.claude-desktop`) ships in **complain mode with its `deny` rules still enforced** (AppArmor enforces denies even in complain) — ~/.ssh, ~/.gnupg, keyrings, /etc/shadow and /root are protected from day one, while the audit trail from real use gates the flip to full enforce. Validated at build time by `apparmor_parser -Q` in hook 0700 |
 | Kernel lockdown + hardened cmdline | `etc/default/grub.d/10-sanctum.cfg` — `lockdown=integrity` (blocks kexec, `/dev/mem`, and other runtime kernel-modification paths), `init_on_alloc=1 init_on_free=1` (zeroed memory, blunts use-after-free), `slab_nomerge`, `page_alloc.shuffle=1`, `randomize_kstack_offset=on`. x86-only flags (`pti`, `vsyscall`) are intentionally absent; KPTI is always-on on arm64 |
 | KSPP sysctls | `etc/sysctl.d/90-sanctum-hardening.conf`, quoted in full below |
 | Kernel module blacklist | `etc/modprobe.d/10-sanctum-blacklist.conf` — legacy network protocols (DCCP, SCTP, RDS, TIPC, AX.25, …), rarely-used filesystems with historically buggy parsers (cramfs, hfs, udf, …), DMA-capable buses absent in VMs (FireWire, Thunderbolt), and Bluetooth. `install <mod> /bin/false` blocks loading even on request |
@@ -164,9 +164,16 @@ Honest hardening means naming the trade-offs, not hiding them.
   (unattended-upgrades daily, Flatpak daily) so the window between patch and
   deployment is hours, not "whenever the user remembers."
 
-- **No SELinux.** Debian's mature MAC path is AppArmor; every shipped profile
-  is enforced. Swapping in SELinux would trade a working, maintained
-  configuration for an unmaintained bespoke one.
+- **No SELinux.** Debian's mature MAC path is AppArmor. Swapping in SELinux
+  would trade a working, maintained configuration for an unmaintained bespoke
+  one.
+
+- **The Claude Desktop profile starts in complain mode.** An enforced profile
+  that was never runtime-tested against the flagship app (whose Claude Code
+  tab runs a real shell) risks breaking it in ways only discoverable after
+  boot. Complain mode still enforces every `deny` rule (the crown-jewel
+  perimeter), logs everything else, and the flip to enforce is one line once
+  the audit trail from boot testing is clean.
 
 - **DNSSEC is `allow-downgrade`, not `yes`.** Strict DNSSEC breaks name
   resolution behind middleboxes and some captive setups with no user-visible

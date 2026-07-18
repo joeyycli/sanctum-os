@@ -62,7 +62,7 @@ Open **Install Sanctum OS**. Calamares walks you through, in order:
 4. **Partitions** — choose **Erase disk** (the disk is the empty 25 GB virtual
    disk; there is nothing on it to preserve). Full-disk encryption is
    **pre-selected**: the encrypt option is already checked, and you are asked
-   for a passphrase here. This creates a LUKS2 container holding the entire
+   for a passphrase here. This creates a LUKS container holding the entire
    system; only the small EFI partition stays unencrypted, as it must. Choose a
    passphrase you can type reliably — it cannot be recovered, and the VM's disk
    is unreadable without it.

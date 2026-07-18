@@ -41,5 +41,7 @@ EOF
 
 # AppArmor: validate the Sanctum profile at BUILD time — a syntax error here
 # must fail the build, not silently skip confinement at boot.
-apparmor_parser -Q /etc/apparmor.d/claude-desktop
-echo "AppArmor claude-desktop profile parses OK"
+# (The profile lives at sanctum.claude-desktop; the vendor postinst owns and
+# rewrites /etc/apparmor.d/claude-desktop, which we symlink-disable instead.)
+apparmor_parser -Q /etc/apparmor.d/sanctum.claude-desktop
+echo "AppArmor sanctum.claude-desktop profile parses OK"

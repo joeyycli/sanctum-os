@@ -40,7 +40,7 @@ VirtualBox ARM64 VM (UEFI firmware — there is no BIOS path)
           └─ Linux arm64 + initramfs
               ├─ live:      live-boot locates the squashfs on the ISO,
               │             assembles / as squashfs + tmpfs overlay
-              ├─ installed: cryptsetup prompts for the LUKS2 passphrase,
+              ├─ installed: cryptsetup prompts for the LUKS passphrase,
               │             opens the root container
               └─ Plymouth   "sanctum" splash theme (and the LUKS prompt)
                   └─ systemd → graphical.target
@@ -48,7 +48,7 @@ VirtualBox ARM64 VM (UEFI firmware — there is no BIOS path)
 ```
 
 The ISO is built `iso-hybrid` with GRUB-EFI and `--uefi-secure-boot auto`
-(`config/auto/config`); the installed system carries the full signed arm64
+(`auto/config`); the installed system carries the full signed arm64
 chain (`shim-signed`, `grub-efi-arm64-signed`) so it also boots firmware that
 enforces Secure Boot. VirtualBox's ARM firmware does not enforce it by default.
 
@@ -58,8 +58,8 @@ One image, two lives. Differences at a glance:
 
 | | Live session | Installed system |
 | --- | --- | --- |
-| Root filesystem | Read-only squashfs + RAM overlay; nothing persists | ext4 inside a LUKS2 container |
-| Disk encryption | None (nothing is written) | LUKS2 full-disk, passphrase at boot |
+| Root filesystem | Read-only squashfs + RAM overlay; nothing persists | ext4 inside a LUKS container |
+| Disk encryption | None (nothing is written) | LUKS full-disk, passphrase at boot |
 | User | `sanctum`, auto-login, passwordless sudo | Your account from the installer; root locked; sudo with password |
 | Journald | RAM-bounded (32 MB runtime) | Persistent but capped (64 MB), flipped by Calamares postinstall |
 | Claude Desktop | Absent (would not persist anyway) | Provisioned on first boot with network |
@@ -120,7 +120,7 @@ time) — updates are an invariant, not an app.
 
 | Concern | Path |
 | ------- | ---- |
-| Image definition (arch, bootloader, squashfs, live params) | `config/auto/config` |
+| Image definition (arch, bootloader, squashfs, live params) | `auto/config` |
 | Package selection | `config/package-lists/*.list.chroot` |
 | Files shipped verbatim into `/` | `config/includes.chroot/` |
 | Build-time customization (identity, key pinning, Flatpaks, services, hardening, cleanup) | `config/hooks/normal/*.hook.chroot` |

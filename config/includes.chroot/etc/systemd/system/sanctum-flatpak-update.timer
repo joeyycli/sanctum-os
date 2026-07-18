@@ -3,8 +3,9 @@ Description=Daily automatic Flatpak updates (Firefox, Telegram)
 
 [Timer]
 OnBootSec=10min
-OnUnitActiveSec=1d
+OnCalendar=daily
 RandomizedDelaySec=1h
+# Persistent only affects OnCalendar= triggers — hence the calendar form.
 Persistent=true
 
 [Install]
