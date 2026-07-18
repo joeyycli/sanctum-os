@@ -56,6 +56,16 @@
       "SponsoredSuggestions": false,
       "ImproveSuggest": false,
       "Locked": false
+    },
+    "Preferences": {
+      "gfx.webrender.software": {
+        "Value": true,
+        "Status": "default"
+      },
+      "general.smoothScroll": {
+        "Value": false,
+        "Status": "default"
+      }
     }
   }
 }
