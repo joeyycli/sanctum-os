@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Sanctum Assistant
+GenericName=Desktop Assistant
+Comment=Ask your computer to do things — open apps, search the web, and more
+Exec=sanctum-assistant
+Icon=sanctum
+Terminal=false
+StartupNotify=true
+Categories=Utility;GTK;
+Keywords=assistant;agent;ai;claude;voice;command;

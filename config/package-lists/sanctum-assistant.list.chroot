@@ -1,0 +1,6 @@
+# Sanctum OS — built-in desktop assistant (GTK4/Libadwaita, Python).
+# No pip: everything the assistant needs is a distro package.
+python3
+python3-gi
+gir1.2-gtk-4.0
+gir1.2-adw-1

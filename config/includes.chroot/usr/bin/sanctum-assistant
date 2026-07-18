@@ -1,0 +1,3 @@
+#!/bin/sh
+# Sanctum Assistant launcher.
+exec python3 /usr/lib/sanctum-assistant/sanctum_assistant.py "$@"

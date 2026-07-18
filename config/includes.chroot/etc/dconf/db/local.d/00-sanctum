@@ -20,7 +20,7 @@ titlebar-font='Inter Bold 11'
 [org/gnome/shell]
 # Desktop id verified against the official claude-desktop 1.22209.0 arm64 .deb:
 # it ships usr/share/applications/com.anthropic.Claude.desktop
-favorite-apps=['com.anthropic.Claude.desktop', 'org.mozilla.firefox.desktop', 'org.telegram.desktop.desktop', 'org.gnome.Console.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Settings.desktop']
+favorite-apps=['sanctum-assistant.desktop', 'com.anthropic.Claude.desktop', 'org.mozilla.firefox.desktop', 'org.telegram.desktop.desktop', 'org.gnome.Console.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Settings.desktop']
 enabled-extensions=['dash-to-dock@micxgx.gmail.com']
 
 [org/gnome/shell/extensions/dash-to-dock]
@@ -87,3 +87,12 @@ power-button-action='interactive'
 use-system-font=false
 custom-font='JetBrains Mono 12'
 theme='auto'
+
+[org/gnome/settings-daemon/plugins/media-keys]
+# Super+A summons Sanctum Assistant from anywhere.
+custom-keybindings=['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/sanctum-assistant/']
+
+[org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/sanctum-assistant]
+name='Sanctum Assistant'
+command='sanctum-assistant'
+binding='<Super>a'
