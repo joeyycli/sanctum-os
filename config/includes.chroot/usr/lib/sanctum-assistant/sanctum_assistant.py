@@ -16,6 +16,7 @@
 import json
 import os
 import re
+import shlex
 import threading
 import urllib.request
 import urllib.error
@@ -77,13 +78,19 @@ class Actions:
         return f"I couldn't find an app called “{name}”."
 
     def _open_uri(self, uri):
-        # Deliver the URI as a launch argument to Firefox itself. On a cold
-        # start this opens Firefox directly on the page (no race with a
-        # still-initialising instance); on a warm start it opens a new tab.
-        info = Gio.DesktopAppInfo.new("org.mozilla.firefox.desktop")
-        if info:
-            info.launch_uris([uri], None)
-        else:
+        # Invoke the Firefox flatpak directly with the URL. This reliably opens
+        # the page on BOTH a cold start (new instance opens on the URL) and a
+        # warm start (new tab in the running instance) — unlike portal-based
+        # launch_default_for_uri / launch_uris, which drop the URL when Firefox
+        # is still initialising. setsid+& detaches it so Firefox outlives the
+        # assistant; shlex.quote makes the URL injection-safe.
+        cmd = ("setsid flatpak run org.mozilla.firefox "
+               f"{shlex.quote(uri)} >/dev/null 2>&1 &")
+        try:
+            Gio.Subprocess.new(["/bin/sh", "-c", cmd],
+                               Gio.SubprocessFlags.STDOUT_SILENCE
+                               | Gio.SubprocessFlags.STDERR_SILENCE)
+        except GLib.Error:
             Gio.AppInfo.launch_default_for_uri(uri, None)
 
     def open_url(self, url):
