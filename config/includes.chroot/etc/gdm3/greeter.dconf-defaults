@@ -1,0 +1,20 @@
+# Sanctum OS -- GDM greeter defaults.
+#
+# Debian compiles this keyfile into /var/lib/gdm3/greeter-dconf-defaults
+# via /usr/share/gdm/generate-config, which runs before every gdm3 start,
+# so changes here take effect on the next boot (or "dpkg-reconfigure gdm3").
+#
+# Deliberately NOT set here:
+#   - color-scheme: the GDM 48 greeter is GNOME Shell chrome (dark styling
+#     only); org/gnome/desktop/interface color-scheme is not honored by it.
+#   - accessibility menu: left at GDM defaults on purpose.
+
+[org/gnome/login-screen]
+logo='/usr/share/sanctum/branding/gdm-logo.png'
+disable-user-list=false
+banner-message-enable=false
+
+[org/gnome/desktop/interface]
+# GNOME Shell 47+ honors named accent colors in shell chrome (entry focus,
+# toggles), including the greeter session. Keeps the login screen on-brand.
+accent-color='slate'

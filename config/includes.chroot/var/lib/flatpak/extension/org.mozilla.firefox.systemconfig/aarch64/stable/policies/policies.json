@@ -1,0 +1,61 @@
+{
+  "policies": {
+    "DisableTelemetry": true,
+    "DisableFirefoxStudies": true,
+    "DisablePocket": true,
+    "DisableFeedbackCommands": true,
+    "DisableFirefoxAccounts": false,
+    "DontCheckDefaultBrowser": true,
+    "DisableSetDesktopBackground": true,
+    "OverrideFirstRunPage": "",
+    "OverridePostUpdatePage": "",
+    "NoDefaultBookmarks": true,
+    "CaptivePortal": false,
+    "NetworkPrediction": false,
+    "SearchSuggestEnabled": false,
+    "HttpsOnlyMode": "enabled",
+    "DNSOverHTTPS": {
+      "Enabled": false,
+      "Locked": false
+    },
+    "EnableTrackingProtection": {
+      "Value": true,
+      "Locked": false,
+      "Cryptomining": true,
+      "Fingerprinting": true
+    },
+    "Cookies": {
+      "Behavior": "reject-tracker-and-partition-foreign"
+    },
+    "SanitizeOnShutdown": {
+      "Cache": true,
+      "Downloads": false,
+      "FormData": true,
+      "History": false,
+      "Sessions": false
+    },
+    "UserMessaging": {
+      "ExtensionRecommendations": false,
+      "FeatureRecommendations": false,
+      "UrlbarInterventions": false,
+      "SkipOnboarding": true,
+      "MoreFromMozilla": false
+    },
+    "FirefoxHome": {
+      "Search": true,
+      "TopSites": false,
+      "SponsoredTopSites": false,
+      "Highlights": false,
+      "Pocket": false,
+      "SponsoredPocket": false,
+      "Snippets": false,
+      "Locked": false
+    },
+    "FirefoxSuggest": {
+      "WebSuggestions": false,
+      "SponsoredSuggestions": false,
+      "ImproveSuggest": false,
+      "Locked": false
+    }
+  }
+}

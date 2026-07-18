@@ -1,0 +1,24 @@
+#!/bin/sh
+# Sanctum OS — image slimming. Runs last.
+set -e
+
+export DEBIAN_FRONTEND=noninteractive
+
+# Anything GNOME's recommends dragged in that isn't part of the Sanctum set.
+apt-get purge -y \
+    gnome-software gnome-software-common \
+    yelp yelp-xsl gnome-user-docs \
+    gnome-tour gnome-user-share \
+    xterm zutty \
+    2>/dev/null || true
+
+apt-get autoremove -y --purge
+apt-get clean
+
+rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*.deb \
+       /var/cache/man/* /var/log/*.log /var/log/apt \
+       /root/.bash_history /root/.wget-hsts 2>/dev/null || true
+
+# Strip locales except English (saves ~100 MB; add more via Settings ▸ Region)
+find /usr/share/locale -mindepth 1 -maxdepth 1 -type d \
+    ! -name 'en*' ! -name 'locale.alias' -exec rm -rf {} + 2>/dev/null || true

@@ -1,0 +1,4 @@
+# Anthropic's official Claude Desktop repository (arm64).
+# Signing key is preseeded at /usr/share/keyrings/claude-desktop-archive-keyring.asc
+# (fingerprint pinned and verified at image build time).
+deb [arch=arm64 signed-by=/usr/share/keyrings/claude-desktop-archive-keyring.asc] https://downloads.claude.ai/claude-desktop/apt/stable stable main

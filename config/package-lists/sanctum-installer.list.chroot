@@ -1,0 +1,15 @@
+# Sanctum OS — installer (Calamares) and disk stack
+calamares
+calamares-settings-debian
+
+# Encryption + filesystems
+cryptsetup
+cryptsetup-initramfs
+e2fsprogs
+dosfstools
+
+# arm64 UEFI boot chain for the installed system
+grub-efi-arm64
+grub-efi-arm64-signed
+shim-signed
+efibootmgr

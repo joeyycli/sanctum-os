@@ -1,0 +1,25 @@
+#!/bin/sh
+# Sanctum OS — apply desktop defaults baked in via /etc/dconf and branding.
+set -e
+
+# Compile dconf system database (defaults + locks live in /etc/dconf/db/local.d)
+dconf update
+
+# Plymouth: Sanctum boot splash
+if [ -d /usr/share/plymouth/themes/sanctum ]; then
+    plymouth-set-default-theme sanctum
+    update-initramfs -u
+fi
+
+# GNOME favorites etc. are dconf defaults; nothing to compile beyond `dconf update`.
+# Hide desktop entries that are technically installed but not part of the
+# Sanctum app set (they remain launchable from a terminal).
+for f in \
+    /usr/share/applications/debian-uxterm.desktop \
+    /usr/share/applications/debian-xterm.desktop \
+    /usr/share/applications/vim.desktop \
+    /usr/share/applications/calamares-install-debian.desktop \
+    /usr/share/applications/calamares.desktop
+do
+    [ -f "$f" ] && sed -i '/^NoDisplay=/d; $ a NoDisplay=true' "$f" || true
+done

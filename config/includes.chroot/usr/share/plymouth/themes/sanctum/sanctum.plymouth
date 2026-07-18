@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=Sanctum
+Description=Sanctum OS boot splash — aperture over warm white
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/sanctum
+ScriptFile=/usr/share/plymouth/themes/sanctum/sanctum.script

@@ -1,0 +1,12 @@
+[Unit]
+Description=Sanctum OS — automatic Flatpak security updates
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/flatpak update --system --noninteractive --assumeyes
+PrivateTmp=yes
+ProtectHome=yes
+Nice=19
+IOSchedulingClass=idle

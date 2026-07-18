@@ -1,0 +1,21 @@
+[Unit]
+Description=Sanctum OS first-boot provisioning (Claude Desktop)
+Wants=network-online.target
+After=network-online.target nss-lookup.target
+ConditionPathExists=!/var/lib/sanctum/provisioned
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/sanctum-provision
+TimeoutStartSec=15min
+Restart=on-failure
+RestartSec=30
+# Hardening: this unit runs apt, so it needs broad filesystem access,
+# but it gets no devices, no home dirs, and a private /tmp.
+PrivateTmp=yes
+ProtectHome=yes
+DevicePolicy=closed
+NoNewPrivileges=no
+
+[Install]
+WantedBy=multi-user.target

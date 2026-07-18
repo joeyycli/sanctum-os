@@ -1,0 +1,26 @@
+# Sanctum OS asset pipeline — consumed by build/mkassets.sh.
+# <svg source> <png output> <width> <height>   (paths repo-root-relative)
+
+# Wallpaper
+branding/wallpaper/sanctum-light.svg config/includes.chroot/usr/share/backgrounds/sanctum/sanctum-light.png 3840 2400
+
+# Brand glyph (shared identity bitmaps)
+branding/logo/sanctum-glyph.svg config/includes.chroot/usr/share/sanctum/branding/glyph-256.png 256 256
+branding/logo/sanctum-glyph.svg config/includes.chroot/usr/share/sanctum/branding/glyph-512.png 512 512
+
+# GDM login logo (horizontal lockup, 4x source canvas)
+branding/logo/sanctum-lockup.svg config/includes.chroot/usr/share/sanctum/branding/gdm-logo.png 220 56
+
+# Plymouth boot splash
+branding/logo/sanctum-glyph.svg config/includes.chroot/usr/share/plymouth/themes/sanctum/logo.png 160 160
+branding/plymouth/dot.svg config/includes.chroot/usr/share/plymouth/themes/sanctum/dot.png 12 12
+branding/plymouth/bullet.svg config/includes.chroot/usr/share/plymouth/themes/sanctum/bullet.png 10 10
+
+# Calamares installer branding
+branding/logo/sanctum-glyph.svg config/includes.chroot/usr/share/calamares/branding/sanctum/logo.png 256 256
+
+# System icon (os-release LOGO=sanctum, GNOME About)
+branding/logo/sanctum-glyph.svg config/includes.chroot/usr/share/icons/hicolor/256x256/apps/sanctum.png 256 256
+
+# Live ISO GRUB menu background (live-build bootloader template override)
+branding/grub/sanctum-grub.svg config/bootloaders/grub-pc/splash.png 1024 768

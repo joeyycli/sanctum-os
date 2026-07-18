@@ -1,0 +1,29 @@
+# Sanctum OS — base system
+# Live session plumbing
+live-boot
+live-config
+live-config-systemd
+
+# Core services
+sudo
+network-manager
+systemd-resolved
+systemd-zram-generator
+systemd-timesyncd
+
+# Security backbone
+nftables
+apparmor
+apparmor-profiles
+apparmor-utils
+unattended-upgrades
+libpam-tmpdir
+
+# Boot experience
+plymouth
+plymouth-themes
+
+# Essentials
+ca-certificates
+curl
+gnupg

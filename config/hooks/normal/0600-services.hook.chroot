@@ -1,0 +1,30 @@
+#!/bin/sh
+# Sanctum OS — service policy: enable the security backbone, remove listeners,
+# trim boot time.
+set -e
+
+# Enable
+systemctl enable nftables.service
+systemctl enable systemd-resolved.service
+systemctl enable sanctum-provision.service
+systemctl enable sanctum-flatpak-update.timer
+systemctl enable systemd-timesyncd.service
+
+# Boot speed: don't block boot waiting for DHCP
+systemctl disable NetworkManager-wait-online.service 2>/dev/null || true
+
+# Minimal attack surface: mask anything that could ever listen or probe.
+# (Most of these aren't installed; masking is belt-and-braces.)
+for unit in bluetooth.service avahi-daemon.service avahi-daemon.socket \
+            cups.service cups.socket cups-browsed.service \
+            ModemManager.service wpa_supplicant.service \
+            ssh.service sshd.service rpcbind.service rpcbind.socket; do
+    systemctl mask "$unit" 2>/dev/null || true
+done
+
+# apt-daily runs are replaced by unattended-upgrades' own timers; keep the
+# upgrade timer, randomize the download timer.
+systemctl enable apt-daily.timer apt-daily-upgrade.timer
+
+# Default target
+systemctl set-default graphical.target

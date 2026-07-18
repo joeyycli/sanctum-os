@@ -1,0 +1,37 @@
+#!/bin/sh
+# Sanctum OS — live-build configuration (aarch64 UEFI live ISO)
+#
+# Target: VirtualBox 7.2+ ARM64 VMs on Apple Silicon hosts (UTM/QEMU compatible).
+# ARM64 VirtualBox VMs boot UEFI-only, so the ISO carries GRUB EFI (BOOTAA64.EFI);
+# there is no BIOS/syslinux path on this architecture.
+
+set -e
+
+lb config noauto \
+    --mode debian \
+    --system live \
+    --distribution trixie \
+    --architecture arm64 \
+    --archive-areas "main contrib non-free-firmware" \
+    --binary-images iso-hybrid \
+    --bootloaders grub-efi \
+    --uefi-secure-boot auto \
+    --linux-flavours arm64 \
+    --linux-packages linux-image \
+    --initramfs live-boot \
+    --chroot-filesystem squashfs \
+    --apt-recommends true \
+    --apt-indices false \
+    --firmware-chroot false \
+    --firmware-binary false \
+    --memtest none \
+    --debian-installer none \
+    --win32-loader false \
+    --zsync false \
+    --checksums sha256 \
+    --iso-application "Sanctum OS" \
+    --iso-publisher "Sanctum OS Project" \
+    --iso-volume "SANCTUM_OS" \
+    --image-name sanctum-os \
+    --bootappend-live "boot=live components quiet splash username=sanctum user-default-groups=audio,cdrom,dip,video,plugdev,netdev,sudo hostname=sanctum locales=en_US.UTF-8 timezone=Etc/UTC" \
+    "${@}"

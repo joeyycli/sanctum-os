@@ -1,0 +1,28 @@
+#!/bin/sh
+# Sanctum OS — install VirtualBox Guest Additions (ARM64) from the mounted
+# Guest Additions CD. In the VirtualBox menu choose:
+#   Devices ▸ Insert Guest Additions CD image…
+# then run:  sudo sanctum-vbox-additions
+set -eu
+
+[ "$(id -u)" -eq 0 ] || { echo "Run with sudo."; exit 1; }
+
+RUNFILE=""
+for base in /media/cdrom /media/cdrom0 /run/media/*/VBox_GAs_* /media/*/VBox_GAs_*; do
+    [ -f "$base/VBoxLinuxAdditions-arm64.run" ] && RUNFILE="$base/VBoxLinuxAdditions-arm64.run" && break
+done
+
+if [ -z "$RUNFILE" ]; then
+    MNT=$(mktemp -d)
+    if mount -o ro /dev/sr0 "$MNT" 2>/dev/null && [ -f "$MNT/VBoxLinuxAdditions-arm64.run" ]; then
+        RUNFILE="$MNT/VBoxLinuxAdditions-arm64.run"
+    else
+        echo "Guest Additions CD not found." >&2
+        echo "In VirtualBox: Devices ▸ Insert Guest Additions CD image…, then retry." >&2
+        exit 1
+    fi
+fi
+
+echo "Installing VirtualBox Guest Additions (arm64)…"
+sh "$RUNFILE" || true   # the installer returns nonzero on benign warnings
+echo "Done. Reboot to activate clipboard sharing and display resize."

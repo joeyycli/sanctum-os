@@ -1,0 +1,4 @@
+# Sanctum OS -- locked keys. These privacy guarantees are mandatory and
+# cannot be changed per-user while the lock is present.
+/org/gnome/desktop/privacy/report-technical-problems
+/org/gnome/desktop/privacy/send-software-usage-stats

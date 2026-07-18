@@ -1,0 +1,45 @@
+#!/bin/sh
+# Sanctum OS — account and permission hardening.
+set -e
+
+# Root: no password login, ever. Administration is sudo-only.
+passwd -l root
+
+# New home directories are private by default.
+sed -i 's/^DIR_MODE=.*/DIR_MODE=0700/' /etc/adduser.conf 2>/dev/null || true
+if [ -f /etc/login.defs ]; then
+    sed -i 's/^UMASK.*/UMASK\t\t027/' /etc/login.defs
+    grep -q '^HOME_MODE' /etc/login.defs \
+        && sed -i 's/^HOME_MODE.*/HOME_MODE\t0700/' /etc/login.defs \
+        || printf 'HOME_MODE\t0700\n' >> /etc/login.defs
+fi
+
+# Cron/at are not installed; if anything pulls them in, restrict to root.
+printf 'root\n' > /etc/cron.allow 2>/dev/null || true
+printf 'root\n' > /etc/at.allow 2>/dev/null || true
+
+# No core dumps (they can contain session tokens and keys).
+mkdir -p /etc/systemd/coredump.conf.d
+cat > /etc/systemd/coredump.conf.d/10-sanctum.conf <<'EOF'
+[Coredump]
+Storage=none
+ProcessSizeMax=0
+EOF
+cat > /etc/security/limits.d/10-sanctum-core.conf <<'EOF'
+* hard core 0
+* soft core 0
+EOF
+
+# Journald: keep logs in RAM only on the live system; the installed system
+# persists a bounded journal (flipped by Calamares postinstall).
+mkdir -p /etc/systemd/journald.conf.d
+cat > /etc/systemd/journald.conf.d/10-sanctum.conf <<'EOF'
+[Journal]
+SystemMaxUse=64M
+RuntimeMaxUse=32M
+EOF
+
+# AppArmor: validate the Sanctum profile at BUILD time — a syntax error here
+# must fail the build, not silently skip confinement at boot.
+apparmor_parser -Q /etc/apparmor.d/claude-desktop
+echo "AppArmor claude-desktop profile parses OK"

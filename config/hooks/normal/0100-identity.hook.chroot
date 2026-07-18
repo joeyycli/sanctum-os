@@ -1,0 +1,33 @@
+#!/bin/sh
+# Sanctum OS — system identity (os-release, issue, motd).
+set -e
+
+VERSION_ID="1.0"
+CODENAME="marble"
+
+cat > /usr/lib/os-release <<EOF
+PRETTY_NAME="Sanctum OS ${VERSION_ID} (${CODENAME})"
+NAME="Sanctum OS"
+VERSION_ID="${VERSION_ID}"
+VERSION="${VERSION_ID} (${CODENAME})"
+VERSION_CODENAME=${CODENAME}
+ID=sanctum
+ID_LIKE=debian
+HOME_URL="https://github.com/sanctum-os"
+SUPPORT_URL="https://github.com/sanctum-os"
+BUG_REPORT_URL="https://github.com/sanctum-os"
+LOGO=sanctum
+EOF
+
+# /etc/os-release is normally a symlink to /usr/lib/os-release; keep it that way.
+ln -sf ../usr/lib/os-release /etc/os-release
+
+printf 'Sanctum OS %s \\n \\l\n\n' "${VERSION_ID}" > /etc/issue
+printf 'Sanctum OS %s\n' "${VERSION_ID}" > /etc/issue.net
+
+# Quiet, clean login — no legal boilerplate, no package ads.
+: > /etc/motd
+rm -f /etc/update-motd.d/* 2>/dev/null || true
+
+# Debian popularity-contest must never sneak in.
+echo 'popularity-contest popularity-contest/participate boolean false' | debconf-set-selections

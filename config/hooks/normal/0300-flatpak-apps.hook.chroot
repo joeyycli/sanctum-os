@@ -1,0 +1,29 @@
+#!/bin/sh
+# Sanctum OS — seed sandboxed applications into the image.
+# Firefox and Telegram ship as aarch64 Flatpaks from Flathub: real bubblewrap
+# sandboxes with portal-mediated access, updated by sanctum-flatpak-update.timer.
+set -e
+
+flatpak remote-add --system --if-not-exists flathub \
+    https://dl.flathub.org/repo/flathub.flatpakrepo
+
+flatpak install --system --noninteractive --assumeyes --arch=aarch64 \
+    org.mozilla.firefox \
+    org.telegram.desktop
+
+# Tightened permission overrides (least privilege beyond upstream defaults):
+# neither app may read the host filesystem; Downloads only.
+flatpak override --system \
+    --nofilesystem=host \
+    --nofilesystem=home \
+    --filesystem=xdg-download \
+    org.mozilla.firefox
+
+flatpak override --system \
+    --nofilesystem=host \
+    --nofilesystem=home \
+    --filesystem=xdg-download \
+    org.telegram.desktop
+
+# Drop stale triggers cache so first boot doesn't rescan.
+flatpak update --system --appstream --noninteractive || true

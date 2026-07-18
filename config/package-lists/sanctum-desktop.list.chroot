@@ -1,0 +1,24 @@
+# Sanctum OS — minimal GNOME 48 desktop
+gdm3
+gnome-shell
+gnome-session
+gnome-control-center
+gnome-console
+nautilus
+gnome-keyring
+gnome-shell-extension-dashtodock
+xdg-desktop-portal-gnome
+xdg-desktop-portal-gtk
+
+# Audio (PipeWire)
+pipewire-audio
+wireplumber
+
+# App sandbox runtime (Firefox + Telegram ship as Flatpaks)
+flatpak
+
+# Typography
+fonts-inter
+fonts-jetbrains-mono
+fonts-noto-core
+fonts-noto-color-emoji

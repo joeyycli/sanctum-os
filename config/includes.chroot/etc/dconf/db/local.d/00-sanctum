@@ -1,0 +1,89 @@
+# Sanctum OS 1.0.0 "marble" -- system-wide desktop defaults.
+# Compiled into the dconf system database by "dconf update"
+# (see config/hooks/normal/0500-desktop-defaults.hook.chroot).
+# Users may override any key not listed in locks/sanctum.
+
+[org/gnome/desktop/interface]
+color-scheme='default'
+accent-color='slate'
+font-name='Inter 11'
+document-font-name='Inter 11'
+monospace-font-name='JetBrains Mono 11'
+enable-hot-corners=false
+show-battery-percentage=false
+clock-show-weekday=true
+
+[org/gnome/desktop/wm/preferences]
+button-layout='appmenu:minimize,maximize,close'
+titlebar-font='Inter Bold 11'
+
+[org/gnome/shell]
+# Desktop id verified against the official claude-desktop 1.22209.0 arm64 .deb:
+# it ships usr/share/applications/com.anthropic.Claude.desktop
+favorite-apps=['com.anthropic.Claude.desktop', 'org.mozilla.firefox.desktop', 'org.telegram.desktop.desktop', 'org.gnome.Console.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.Settings.desktop']
+enabled-extensions=['dash-to-dock@micxgx.gmail.com']
+
+[org/gnome/shell/extensions/dash-to-dock]
+dock-position='BOTTOM'
+dock-fixed=true
+intellihide=false
+dash-max-icon-size=44
+custom-theme-shrink=true
+transparency-mode='FIXED'
+background-opacity=0.6
+show-trash=false
+show-mounts=false
+show-show-apps-button=true
+click-action='focus-minimize-or-previews'
+running-indicator-style='DOTS'
+
+[org/gnome/desktop/background]
+picture-uri='file:///usr/share/backgrounds/sanctum/sanctum-light.png'
+picture-uri-dark='file:///usr/share/backgrounds/sanctum/sanctum-light.png'
+picture-options='zoom'
+primary-color='#F7F6F3'
+
+[org/gnome/desktop/screensaver]
+# Note: org.gnome.desktop.screensaver has no picture-uri-dark key.
+picture-uri='file:///usr/share/backgrounds/sanctum/sanctum-light.png'
+picture-options='zoom'
+primary-color='#F7F6F3'
+lock-enabled=true
+lock-delay=uint32 0
+
+[org/gnome/mutter]
+center-new-windows=true
+
+[org/gnome/desktop/privacy]
+report-technical-problems=false
+send-software-usage-stats=false
+remove-old-temp-files=true
+remove-old-trash-files=true
+old-files-age=uint32 30
+remember-recent-files=true
+recent-files-max-age=7
+
+[org/gnome/desktop/search-providers]
+disable-external=true
+
+[org/gnome/system/location]
+enabled=false
+
+[org/gnome/desktop/media-handling]
+autorun-never=true
+
+[org/gnome/desktop/notifications]
+show-in-lock-screen=false
+
+[org/gnome/desktop/session]
+idle-delay=uint32 420
+
+[org/gnome/settings-daemon/plugins/power]
+# It is a VM: never auto-suspend on "AC".
+sleep-inactive-ac-type='nothing'
+power-button-action='interactive'
+
+[org/gnome/Console]
+use-system-font=false
+custom-font='JetBrains Mono 12'
+theme='auto'

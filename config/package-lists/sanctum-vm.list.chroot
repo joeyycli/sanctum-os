@@ -1,0 +1,11 @@
+# Sanctum OS — VirtualBox/UTM guest support.
+# VirtualBox ARM Guest Additions (clipboard, shared folders, display resize)
+# ship as VBoxLinuxAdditions-arm64.run on Oracle's Guest Additions ISO and
+# compile kernel modules on install — these packages make that Just Work.
+dkms
+build-essential
+linux-headers-arm64
+
+# SPICE/QEMU agent so the UTM fallback gets clipboard + resize natively
+spice-vdagent
+qemu-guest-agent

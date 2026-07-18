@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <title>Sanctum aperture</title>
+  <desc>
+    The Sanctum mark: a stroke-drawn aperture of two concentric rings and a
+    center dot, ink #1A1A1E. The outer ring carries a small seam at 45 degrees,
+    the suggestion of a vault door about to turn. Geometry is centered on
+    (256,256); the outer arc runs from -39deg to -51deg the long way around
+    (348deg sweep), leaving a 12deg seam whose rounded caps narrow it to a
+    calm, deliberate gap.
+  </desc>
+  <g fill="none" stroke="#1A1A1E" stroke-linecap="round">
+    <!-- outer ring, r=176: seam centered on 45deg above the horizon -->
+    <path d="M 392.78 145.24 A 176 176 0 1 1 366.76 119.22" stroke-width="20"/>
+    <!-- inner ring, r=110: one optical step lighter than the outer ring -->
+    <circle cx="256" cy="256" r="110" stroke-width="18"/>
+  </g>
+  <!-- center dot, r=37 -->
+  <circle cx="256" cy="256" r="37" fill="#1A1A1E"/>
+</svg>

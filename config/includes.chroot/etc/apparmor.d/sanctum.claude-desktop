@@ -1,0 +1,187 @@
+# Sanctum OS 1.0.0 "marble" -- AppArmor profile for Claude Desktop.
+#
+# Verified against the official Anthropic package (claude-desktop 1.22209.0,
+# arm64, SHA256 7323fe6c...66e1e9 from the signed apt index):
+#   app dir     /usr/lib/claude-desktop/           (Electron bundle)
+#   binary      /usr/lib/claude-desktop/claude-desktop
+#   sandbox     /usr/lib/claude-desktop/chrome-sandbox   (setuid root, 4755)
+#   launcher    /usr/bin/claude-desktop  -> symlink to the binary above
+#   desktop id  com.anthropic.Claude.desktop
+#   config dir  ~/.config/Claude/  (plus ~/.claude/ for Claude Code state)
+#
+# WHY THIS FILE IS NOT /etc/apparmor.d/claude-desktop:
+# The official package's postinst OWNS that path: on every install/upgrade it
+# does `rm -f` + rewrite of /etc/apparmor.d/claude-desktop with a
+# flags=(unconfined) userns-allowlist profile (needed on Ubuntu 24.04+, inert
+# on Debian trixie where kernel.apparmor_restrict_unprivileged_userns does
+# not exist), then loads it with `apparmor_parser -r`. Anything we put at
+# that filename is silently clobbered at first-boot provisioning.
+#
+# DESIGN (deterministic coexistence with the vendor postinst):
+#   1. This file lives at sanctum.claude-desktop, which the postinst never
+#      touches.
+#   2. It declares the SAME profile name, "claude-desktop", with the SAME
+#      attachment. AppArmor identifies kernel profiles by name, so at any
+#      moment exactly ONE profile named claude-desktop is loaded -- never two
+#      profiles attached to /usr/lib/claude-desktop/claude-desktop (two
+#      same-length attachments would risk "conflicting profile attachments").
+#      When the vendor postinst runs `apparmor_parser -r` it REPLACES this
+#      profile with its unconfined one until the next boot -- i.e. the worst
+#      transient state equals vanilla upstream behavior, never breakage.
+#   3. /etc/apparmor.d/disable/claude-desktop (shipped by Sanctum) makes
+#      apparmor.service skip the vendor-written FILE on every boot, so this
+#      profile is what loads at steady state.
+#
+# MODE: flags=(complain) -- deliberate, and documented in the build notes.
+# This profile cannot be runtime-tested before the first ISO boot (the app
+# only installs on first boot, on arm64, in a VM), and an over-tight enforced
+# profile would break the flagship app -- including the Claude Code tab,
+# which runs a real interactive shell. In complain mode:
+#   * every rule below is exercised and logged, giving a real audit trail to
+#     graduate to enforce mode after boot testing;
+#   * the explicit `deny` rules ARE STILL ENFORCED (AppArmor enforces deny
+#     rules even in complain mode), so the crown jewels -- ~/.ssh, ~/.gnupg,
+#     /etc/shadow, /root -- are protected from day one.
+#
+# EXEC MODEL (keeps the Claude Code terminal working):
+#   * The Electron binary and chrome-sandbox re-exec with `ix` so zygote /
+#     renderer / crashpad children stay in this profile.
+#   * Everything else (bash, git, node, qemu, ...) executes with `pix`:
+#     transition to the target's own profile when one exists (man, etc.),
+#     otherwise inherit this profile. No `ux` -- children never escape to
+#     unconfined. Inherited children keep the deny rules, which is the
+#     point: a Claude-driven shell cannot read your SSH keys either.
+#
+# KNOWN CONSEQUENCES OF THE DENY RULES (intended, but note them):
+#   * ssh/scp/git-over-SSH *inside the Claude Code tab* cannot read
+#     ~/.ssh (keys, config, known_hosts). HTTPS remotes and `gh` work.
+#   * gpg signing inside the tab cannot read ~/.gnupg.
+#   * `sudo` password auth inside the tab may fail (pam_unix reads
+#     /etc/shadow). Graphical polkit prompts are unaffected (the polkit
+#     agent is gnome-shell, outside this profile).
+
+abi <abi/4.0>,
+
+include <tunables/global>
+
+profile claude-desktop /usr/lib/claude-desktop/claude-desktop
+    flags=(complain,attach_disconnected,mediate_deleted) {
+
+  include <abstractions/base>
+  include <abstractions/audio>
+  include <abstractions/dbus-session-strict>
+  include <abstractions/dbus-strict>
+  include <abstractions/dri-common>
+  include <abstractions/dri-enumerate>
+  include <abstractions/fonts>
+  include <abstractions/gnome>
+  include <abstractions/mesa>
+  include <abstractions/nameservice>
+  include <abstractions/openssl>
+  include <abstractions/ssl_certs>
+  include <abstractions/vulkan>
+  include <abstractions/wayland>
+  include <abstractions/X>
+
+  # --- Chromium sandbox plumbing -------------------------------------------
+  # Namespace sandbox: userns is unrestricted on Debian trixie and Sanctum
+  # keeps it that way (see /etc/sysctl.d/90-sanctum-hardening.conf); the
+  # userns rule makes this profile future-proof if that ever changes.
+  userns,
+  # Inside its user namespace the sandbox chroots and builds a private
+  # mount tree; these are namespace-contained.
+  mount,
+  umount,
+  pivot_root,
+  # Capabilities for the setuid chrome-sandbox fallback (shipped 4755) and
+  # for ordinary root-less tooling in the Claude Code terminal.
+  capability setuid,
+  capability setgid,
+  capability sys_admin,
+  capability sys_chroot,
+  capability sys_ptrace,
+  capability sys_resource,
+  capability dac_override,
+  capability dac_read_search,
+  capability audit_write,
+  capability net_raw,
+  capability chown,
+  capability fowner,
+  capability fsetid,
+  capability kill,
+  capability ipc_lock,
+
+  # --- Networking ----------------------------------------------------------
+  network inet stream,
+  network inet dgram,
+  network inet6 stream,
+  network inet6 dgram,
+  network inet raw,
+  network inet6 raw,
+  network netlink raw,
+  network netlink dgram,
+  unix,
+
+  # --- IPC -----------------------------------------------------------------
+  # DBus broad-allow: portals, notifications, gnome-keyring Secret Service
+  # (safeStorage), logind inhibitors, dconf. Mediation only bites where the
+  # bus daemon supports it; allow-all keeps every desktop integration alive.
+  dbus,
+  signal,
+  # Crashpad and debuggers inside the terminal work on in-profile peers;
+  # reading /proc metadata of other processes (ps, top) needs ptrace read.
+  ptrace (read),
+  ptrace (trace, readby, tracedby) peer=claude-desktop,
+  audit deny ptrace (trace) peer=unconfined,
+
+  # --- The application itself ----------------------------------------------
+  /usr/lib/claude-desktop/{,**} mr,
+  /usr/lib/claude-desktop/claude-desktop mrix,
+  /usr/lib/claude-desktop/chrome-sandbox mrix,
+
+  # --- World: broad read, system exec via pix ------------------------------
+  # The Claude Code tab is a real developer shell; it must see the system.
+  # Sensitive files are carved out with deny rules below (deny always wins).
+  /{,**} r,
+  /{usr/,}bin/** mrpix,
+  /{usr/,}sbin/** mrpix,
+  /{usr/,}lib/** mrpix,
+  /{usr/,}libexec/** mrpix,
+  /usr/local/** mrpix,
+  /opt/** mrpix,
+
+  # --- User data: owner-scoped write + exec --------------------------------
+  # Whole-home access is required: Claude Code edits arbitrary project
+  # trees, runs their build products, and MCP servers install under
+  # ~/.local, ~/.npm, ~/.cache. ~/.config/Claude, ~/.claude and Downloads
+  # are subsets of this rule. Other users' homes get no write rule here,
+  # are 0700 by Sanctum policy (HOME_MODE), and /root is denied below.
+  owner @{HOME}/{,**} mrwlkix,
+  owner /{,var/}tmp/{,**} mrwlkix,
+  owner /dev/shm/{,**} mrwlk,
+  owner @{run}/user/[0-9]*/{,**} mrwlk,
+  owner @{PROC}/@{pid}/{,**} rw,
+
+  # --- Devices -------------------------------------------------------------
+  # GPU (VMSVGA / virtio-gpu render nodes)
+  /dev/dri/ r,
+  /dev/dri/** rw,
+  /dev/udmabuf rw,
+  # Terminal PTYs for the Claude Code tab
+  /dev/ptmx rw,
+  /dev/tty rw,
+  owner /dev/pts/[0-9]* rw,
+  # Cowork VMs: qemu-system-aarch64 / virtiofsd / EDK2 are pix + read
+  # covered above; KVM and tap acceleration when the host offers them
+  # (VirtualBox exposes no nested KVM -- qemu falls back to TCG).
+  /dev/kvm rw,
+  /dev/net/tun rw,
+
+  # --- Crown jewels: enforced even while the profile is in complain mode ---
+  audit deny @{HOME}/.ssh/{,**} mrwkl,
+  audit deny @{HOME}/.gnupg/{,**} mrwkl,
+  audit deny /etc/{,g}shadow{,-} mrwkl,
+  audit deny /root/{,**} mrwkl,
+
+  include if exists <local/sanctum.claude-desktop>
+}

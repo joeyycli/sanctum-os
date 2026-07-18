@@ -1,0 +1,45 @@
+<svg viewBox="0 0 3840 2400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Sanctum default wallpaper: warm-white field, soft light from above,
+       large-scale concentric arcs echoing the aperture glyph, whisper-quiet. -->
+  <defs>
+    <radialGradient id="skylight" cx="50%" cy="4%" r="95%">
+      <stop offset="0%" stop-color="#FDFDFB"/>
+      <stop offset="48%" stop-color="#F8F7F4"/>
+      <stop offset="100%" stop-color="#F1F0EB"/>
+    </radialGradient>
+    <linearGradient id="arcfade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E5E4DE" stop-opacity="0.25"/>
+      <stop offset="55%" stop-color="#E3E2DC" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#DEDDD6" stop-opacity="1"/>
+    </linearGradient>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" result="n"/>
+      <feColorMatrix in="n" type="matrix"
+        values="0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0.5 0"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+  </defs>
+
+  <rect width="3840" height="2400" fill="url(#skylight)"/>
+
+  <!-- concentric arcs, center resting just off-canvas at the lower right -->
+  <g fill="none" stroke="url(#arcfade)">
+    <circle cx="3420" cy="2660" r="820"  stroke-width="5"/>
+    <circle cx="3420" cy="2660" r="1080" stroke-width="4"/>
+    <circle cx="3420" cy="2660" r="1340" stroke-width="3.2"/>
+    <circle cx="3420" cy="2660" r="1600" stroke-width="2.6"/>
+    <circle cx="3420" cy="2660" r="1860" stroke-width="2"/>
+  </g>
+
+  <!-- counterpoint: two faint arcs breathing in from the upper left -->
+  <g fill="none" stroke="#ECEBE5">
+    <circle cx="180" cy="-260" r="980"  stroke-width="2"/>
+    <circle cx="180" cy="-260" r="1240" stroke-width="1.4"/>
+  </g>
+
+  <!-- the aperture's center dot, once, small, off the thirds line -->
+  <circle cx="2560" cy="1800" r="7" fill="#D9D8D1"/>
+
+  <!-- paper grain, barely there -->
+  <rect width="3840" height="2400" fill="#808080" filter="url(#grain)" opacity="0.035"/>
+</svg>

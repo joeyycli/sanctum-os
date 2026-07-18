@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Install Sanctum OS
+Comment=Install Sanctum OS permanently on this machine
+# Reuses the pkexec launcher shipped by calamares-settings-debian, whose
+# polkit policy authorizes the live session without a password prompt.
+Exec=calamares-install-debian
+Icon=sanctum
+Terminal=false
+StartupNotify=true
+Categories=System;
+Keywords=installer;calamares;install;
