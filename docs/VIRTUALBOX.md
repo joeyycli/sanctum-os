@@ -132,3 +132,12 @@ a launcher shim (`/usr/local/bin/claude-desktop`) that detects the missing
 a blank Claude window regardless, launch it manually with:
 
     claude-desktop --disable-gpu
+
+## Mouse pointer invisible after clicking into the VM?
+
+Press the **host key** (Left ⌘ on macOS) to release the pointer. Permanent fix:
+give the VM an absolute pointing device, which vbox-create.sh now does by default:
+
+    VBoxManage modifyvm "Sanctum OS" --mouse usbtablet
+
+(VM must be powered off when changing it.)

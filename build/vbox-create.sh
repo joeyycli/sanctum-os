@@ -23,6 +23,7 @@ VBoxManage modifyvm "$VM_NAME" \
     --graphicscontroller vmsvga \
     --vram 128 \
     --usb-xhci on \
+    --mouse usbtablet \
     --audio-driver none \
     --nic1 nat \
     --clipboard-mode bidirectional
